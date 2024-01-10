@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moving Rainbow</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .rainbow-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .rainbow {
+      width: 2100px; /* 7개의 색상이니까 300px * 7 = 2100px */
+      height: 800px;
+      border-radius: 100%;
+      background: linear-gradient(to right, violet, indigo, blue, green, yellow, orange, red);
+      animation: moveRainbow 2s linear infinite alternate; /* 왔다갔다 반복, 여기서 alternate는 왔다갔다 반복하는 효과를 줍니다. */
+    }
+
+    @keyframes moveRainbow {
+      0% {
+        transform: translateX(0px);
+      }
+
+      100% {
+        transform: translateX(-1800px);
+        /* 2100px - 300px (컨테이너 너비) = -1800px */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="rainbow-container">
+    <div class="rainbow"></div>
+  </div>
+</body>
+</html>
