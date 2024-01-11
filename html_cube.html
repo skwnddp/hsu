@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Scroll 3D Cube</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #container {
+            perspective: 800px; /* Adjusted perspective value */
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #cube {
+            width: 200px;
+            height: 200px;
+            transform-style: preserve-3d;
+            transition: transform 0.1s, background 0.1s;
+        }
+
+        .face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #3498db, #e74c3c);
+            border: 10px solid #fff;
+            box-shadow: 0 0 100px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            color: #fff;
+            font-weight: bold;
+            transform: rotateY(180deg); /* Counter-rotate the text on the back face */
+        }
+
+        #front { transform: translateZ(110px) rotateY(0deg); }
+        #back { transform: translateZ(-110px) rotateY(180deg); } /* Adjusted translateZ value */
+        #left { transform: rotateY(-90deg) translateZ(110px); }
+        #right { transform: rotateY(90deg) translateZ(110px); }
+        #top { transform: rotateX(-90deg) translateZ(110px); }
+        #bottom { transform: rotateX(90deg) translateZ(110px); }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="cube">
+            <div id="front" class="face">1</div>
+            <div id="back" class="face">2</div>
+            <div id="left" class="face">3</div>
+            <div id="right" class="face">4</div>
+            <div id="top" class="face">5</div>
+            <div id="bottom" class="face">6</div>
+        </div>
+    </div>
+
+    <script>
+        let scrollCount = 0;
+
+        function handleScroll(event) {
+            if (event.deltaY > 0) {
+                scrollCount++;
+            } else if (scrollCount > 0) {
+                scrollCount--;
+            }
+
+            const rotationX = getRandomRotation();
+            const rotationY = getRandomRotation();
+            const rotationZ = 2 * getRandomRotation();
+            const rotation = scrollCount * 90;
+            const hue = scrollCount * 30;
+
+            document.getElementById('cube').style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) rotateZ(${rotationZ}deg)`;
+            document.getElementById('cube').style.background = `linear-gradient(${hue}deg, #3498db, #e74c3c)`;
+        }
+
+        function getRandomRotation() {
+            return (Math.random() * 360) - 180; // Returns a random angle between -180 and 180 degrees
+        }
+
+        window.addEventListener('wheel', handleScroll);
+    </script>
+</body>
+</html>
