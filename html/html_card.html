@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* 기본 스타일 */
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+
+    /* 카드 스타일 */
+    .card {
+      width: 150px;
+      height: 220px;
+      background-color: #3498db;
+      background-image: url('https://img.icons8.com/ios/452/joker-card.png');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.2s ease-in-out;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: rotateY(180deg) rotateX(180deg);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 카드 -->
+  <div class="card" id="jokerCard">
+    <!-- 강조 효과 -->
+    <div class="highlight"></div>
+  </div>
+
+  <script>
+    const jokerCard = document.getElementById('jokerCard');
+    const highlight = jokerCard.querySelector('.highlight');
+
+    jokerCard.addEventListener('mousemove', (e) => {
+      const rect = jokerCard.getBoundingClientRect();
+      const xPercent = (e.clientX - rect.left) / rect.width * 100;
+      const yPercent = (e.clientY - rect.top) / rect.height * 100;
+    });
+  </script>
+</body>
+</html>
