@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sin 함수 웨이브 애니메이션</title>
+  <style>
+    canvas {
+      border: 1px solid #000;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="myCanvas" width="400" height="200"></canvas>
+
+<script>
+  var canvas = document.getElementById("myCanvas");
+  var context = canvas.getContext("2d");
+
+  // 시작 각도와 애니메이션 속도 설정
+  var angle = 0;
+  var speed = 0.05;
+
+  function drawWave() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    context.beginPath();
+
+    for (var i = 0; i <= canvas.width; i += 5) {
+      var x = i;
+      var y = Math.sin(angle + i / 20) * 50 + 100;
+      context.lineTo(x, y);
+    }
+
+    context.strokeStyle = "#ff0000";
+    context.lineWidth = 2;
+    context.stroke();
+
+    // 각도 증가
+    angle += speed;
+
+    // 애니메이션 프레임 요청
+    requestAnimationFrame(drawWave);
+  }
+
+  // 애니메이션 시작
+  drawWave();
+</script>
+
+</body>
+</html>
