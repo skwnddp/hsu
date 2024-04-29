@@ -1,0 +1,129 @@
+// function onEdit(e) {
+//   var sheet = e.source.getActiveSheet();
+//   var range = e.range;
+  
+//   // Check if the edited cell is the trigger cell in L40
+//   if (range.getA1Notation() == "L22" || range.getA1Notation() == "N22") {
+//     // Check if the trigger cell in L40 has been edited
+//     // and if the edited value matches the text in cell L22 or N22
+//     var linkCell = range;
+//     if (linkCell.isHyperlink()) {
+//       var hyperlinkRange = sheet.getRangeByUrl(linkCell.getFormula());
+//       if (range.getA1Notation() == "L40" && hyperlinkRange.getValue() == "Link Text for PushColor") {
+//         // Execute the pushColor function
+//         pushColor();
+//       } else if (range.getA1Notation() == "N40" && hyperlinkRange.getValue() == "Link Text for DeleteColor") {
+//         // Execute the deleteColor function
+//         deleteColor();
+//       }
+//     }
+//   }
+// }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function pushColor() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var selectedRange = sheet.getActiveRange();
+  var startRow = selectedRange.getRow(); // Get the starting row index
+  var startCol = selectedRange.getColumn(); // Get the starting column index
+
+  // Check if selected cells are within the range of rows 9 to 16 and columns C to N
+  if (startRow >= 9 && startRow + selectedRange.getNumRows() - 1 <= 16 && startCol >= 3 && startCol + selectedRange.getNumColumns() - 1 <= 14) {
+    var colors = ["#ffcccc", "#ccffcc", "#ccccff", "#ffffcc", "#ffccff", "#ccffff", "#ffebcc", "#ebccff"]; // Add your 8 colors here
+    var rowIndex = startRow;
+    var numRows = selectedRange.getNumRows();
+    var numCols = selectedRange.getNumColumns();
+
+    for (var i = 0; i < numRows; i++) {
+      for (var j = 0; j < numCols; j++) {
+        var cell = sheet.getRange(startRow + i, startCol + j);
+        var colorIndex = (rowIndex - 8) % colors.length; // Cycling through colors array
+        var color = colors[colorIndex];
+        cell.setBackground(color);
+      }
+      rowIndex++;
+    }
+
+    // Write the Dropbox name to row 18 for all columns and set background color
+    var dropboxName = sheet.getRange(startRow, 2).getValue();
+    for (var k = 0; k < numCols; k++) {
+      var dropboxCell = sheet.getRange(18, startCol + k);
+      dropboxCell.setValue(dropboxName);
+      dropboxCell.setBackground(color);
+    }
+  } else {
+    SpreadsheetApp.getUi().alert('넣기 범위를 벗어났습니다! \n Please select cells within C9:N16.');
+  }
+}
+
+function deleteColor() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var range = sheet.getActiveRange();
+  var startColumn = range.getColumn();
+  var endColumn = startColumn + range.getWidth() - 1;
+  
+  // Check if the selected range is within the specified range C9:N16
+  if (startColumn < 3 || endColumn > 14 || range.getRow() < 9 || range.getLastRow() > 16) {
+    SpreadsheetApp.getUi().alert('삭제 범위를 벗어났습니다! \n Please select a range within C9:N16.');
+    return;
+  }
+  
+  // Set background color to white for the selected range
+  range.setBackground('white');
+  
+  // Iterate through columns C18:N18
+  for (var j = 3; j <= 14; j++) {
+    // Check if the column overlaps with the selected range
+    if (j >= startColumn && j <= endColumn) {
+      // Clear content and set background color to white for the corresponding cell in row 18
+      var cell = sheet.getRange(18, j);
+      cell.clearContent();
+      cell.setBackground('white');
+    }
+  }
+}
+
+function resetDropbox() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var dropboxCell = sheet.getRange('B9:B16'); // Assuming the Dropbox cell is B8
+  
+  // Set the value of the Dropbox cell to null or an empty string
+  dropboxCell.setValue('누구인가');
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function nightlyUpdate() {
+  // Get the active sheet
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  
+  // Get the data and background colors from the first sheet
+  var sourceSheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  var dataRange = sourceSheet.getRange("C18:N18");
+  var data = dataRange.getValues();
+  var backgroundColors = dataRange.getBackgrounds();
+  
+  // Get the selected cell
+  var selectedCell = sheet.getActiveCell();
+  
+  // Paste both the data and background colors into the selected range
+  var targetRange = selectedCell.offset(0, 0, data.length, data[0].length);
+  targetRange.setValues(data);
+  targetRange.setBackgrounds(backgroundColors);
+  
+  // Get today's date
+  var today = new Date();
+  
+  // Write the date and day of the week to column number 2 of the selected cell
+  selectedCell.offset(0, -1).setValue(today);
+}
+
+function scheduleNightlyUpdate() {
+  ScriptApp.newTrigger("nightlyUpdate")
+    .timeBased()
+    .everyDays(1)
+    .atHour(11)
+    .inTimezone("Asia/Seoul")
+    .create();
+}
