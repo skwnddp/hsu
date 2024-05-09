@@ -1,0 +1,25 @@
+//Thx to chatGPT
+function onEdit(e) {
+  // Check if event object and range are defined
+  if (e && e.range) {
+    var sheet = e.range.getSheet();
+    var range = e.range;
+    var column = range.getColumn();
+
+    // Check if the edited range is in column D and row is between 5 and 111
+    if (sheet.getIndex() == 3 && 
+      column == 5 && range.getRow() >= 5 && range.getRow() <= 111 ) { 
+
+      var row = range.getRow();
+      var dateCell = sheet.getRange("C" + row);
+      dateCell.setValue(new Date());
+    }
+    if (sheet.getIndex() == 2 &&
+      column >= 3 && column <= 8 && range.getRow() >= 6 && range.getRow() <= 111 ) { 
+
+      var row = range.getRow();
+      var dateCell = sheet.getRange("B" + row);
+      dateCell.setValue(new Date());
+    }
+  }
+}
