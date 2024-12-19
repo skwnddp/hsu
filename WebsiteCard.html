@@ -230,7 +230,7 @@
       const newCard = createCard(title, content);
       cardContainer.appendChild(newCard);
     }
-    // 1부터 100까지의 카드 데이터 생성
+    // 카드 데이터 생성
     const cardData = [];
     for (let i = 1; i <= 200; i++) {
       cardData.push({
@@ -238,11 +238,31 @@
         content: `This is the content of card ${i}.`
       });
     }
-    // 카드 데이터 순차적으로 추가
-    cardData.forEach(card => addCard(card.title, card.content));
-    // 추가적으로 카드가 필요하면 여기에 더 추가할 수 있음
-    // addCard('Card 7', 'This is the content of card 7.');
-    // addCard('Card 8', 'This is the content of card 8.');
+    // Lazy Loading 코드
+  const cardContainer = document.getElementById('card-container');
+  let lastLoadedIndex = 0; // 마지막으로 로드된 카드 인덱스
+  const cardsPerLoad = 20; // 한 번에 로드할 카드 수
+
+  const loadCards = () => {
+    for (let i = 0; i < cardsPerLoad; i++) {
+      if (lastLoadedIndex >= cardData.length) return; // 카드가 더 이상 없으면 중단
+      const card = cardData[lastLoadedIndex];
+      addCard(card.title, card.content);
+      lastLoadedIndex++;
+    }
+  };
+
+  // 스크롤 이벤트 설정
+  window.addEventListener('scroll', () => {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+    if (scrollTop + clientHeight >= scrollHeight - 10) {
+      // 스크롤이 끝에 도달하면 새 카드를 로드
+      loadCards();
+    }
+  });
+
+  // 초기 카드 로드
+  loadCards();
   </script>
 </body>
 
