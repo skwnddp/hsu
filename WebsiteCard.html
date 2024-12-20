@@ -253,7 +253,7 @@
   };
 
   // 스크롤 이벤트 설정
-  window.addEventListener('scroll', () => {
+  window.addEventListener('scroll', () => { 
     const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
     if (scrollTop + clientHeight >= scrollHeight - 10) {
       // 스크롤이 끝에 도달하면 새 카드를 로드
