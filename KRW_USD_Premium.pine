@@ -1,0 +1,58 @@
+// ▶ KRW 
+//@version=6
+
+indicator("김치 krw")
+name = syminfo.basecurrency
+K = "KRW", B = "BUSD", U = "USDT", exchange = "UPBIT"
+
+//업비트 krw > btc 순서로 체크 //거래소 : syminfo.prefix
+//upbitB = request.security("UPBIT:" + name + "BTC", timeframe.period, close)
+//btc = request.security("UPBIT:BTCKRW", timeframe.period, close)
+//BTCKRW = request.security("UPBIT:BTCKRW", timeframe.period, close)
+
+if (str.contains(syminfo.prefix, "BITHUMB")) == true
+    exchange := "BITHUMB:"
+else if (str.contains(syminfo.currency, "BTC")) == true
+    exchange := "UPBIT:BTCKRW*UPBIT:" 
+    K := "BTC"
+else 
+    exchange := "UPBIT:"
+upbit = request.security(exchange + name + K, timeframe.period, close)
+
+//바낸은 usdt > usdt.p 순서로 체크
+//binance = request.security("BINANCE:" + name + B, timeframe.period, close)
+
+// 바이낸스 현물 가격 가져오기
+binance_spot = request.security("BINANCE:" + name + U, timeframe.period, close)
+
+// 바이낸스 선물(USDT-P) 가격 가져오기 (현물이 없을 때만 사용)
+binance_futures = request.security("BINANCE:" + name + U + ".P", timeframe.period, close)
+
+// 현물이 있으면 현물 사용, 없으면 선물 사용
+binance = (na(binance_spot) or (binance_spot <= 0)) ? binance_spot : binance_futures
+
+dir = request.security("USDKRW", timeframe.period, close)
+
+kimchi1 = (upbit/binance/dir-1)*100
+//kimchi = (UPBIT:BTCKRW/BINANCE:BTCUSDT/FX_IDC:USDKRW-1)*100
+
+//kimchi1 = (upbit2*1.02/binance1/dir-1)*100
+//plot(kimchi1, color=color.gray)
+//plot(kimchi2, color=color.gray)
+//hline(0, title="0", color=color.rgb(29, 29, 29, 60), linestyle=hline.style_dotted, linewidth=1)
+
+linecolor = kimchi1 < -4 ? color.navy : 
+   kimchi1 < -2 ? color.blue : kimchi1 < 0 ? color.green : 
+   kimchi1 < 2 ? color.orange : kimchi1 < 4 ? color.red : 
+   kimchi1 < 6 ? color.maroon : kimchi1 < 8 ? color.black : color.purple
+plot(kimchi1, "kimchi1", linecolor, 1)
+//plot(4)
+
+print(txt) =>
+    var table t = table.new(position.middle_left, 10, 10)
+    table.cell(t, 0, 0, txt, width = 20, text_color=color.rgb(0, 38, 255, 20), text_halign = text.align_right, text_size = size.normal, bgcolor = color.rgb(0, 0, 0, 96))
+if (str.contains(syminfo.currency, "KRW")) == true
+    // if (str.contains(syminfo.currency, "BUSD")) == true
+    print("[ " + name + U +" ]" ) 
+else 
+    print("[ " + name + K+" ]")  
