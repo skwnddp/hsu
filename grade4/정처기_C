@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* removeEven(struct Node* head) {
+    if (head == NULL) {
+        return NULL;
+    }
+    if (head->data % 2 == 0) {
+        struct Node* temp = head->next;
+        free(head);
+        return removeEven(temp);
+    } else {
+        head->next = removeEven(head->next);
+        return head;
+    }
+}
+
+int main() {
+    struct Node* head = (struct Node*)malloc(sizeof(struct Node));
+    head->data = 1;
+    head->next = (struct Node*)malloc(sizeof(struct Node));
+    head->next->data = 2;
+    head->next->next = (struct Node*)malloc(sizeof(struct Node));
+    head->next->next->data = 3;
+    head->next->next->next = (struct Node*)malloc(sizeof(struct Node));
+    head->next->next->next->data = 4;
+    head->next->next->next->next = (struct Node*)malloc(sizeof(struct Node));
+    head->next->next->next->next->data = 5;
+    head->next->next->next->next->next = NULL;
+
+    head = removeEven(head);
+
+    struct Node* current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+
+    return 0;
+}
